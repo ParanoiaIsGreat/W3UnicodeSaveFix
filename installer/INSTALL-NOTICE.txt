@@ -1,0 +1,17 @@
+W3UnicodeSaveFix 0.1.0 — experimental x64 DX12 workaround
+
+This mod changes a dynamically found private save-path string in the running game.
+It is not a CD PROJEKT RED product, an engine fix, or a guarantee for every build.
+The only demonstrated game build is 5.0.0.1041720; installation does not prove compatibility.
+
+Close the game yourself before installing or uninstalling. Setup never terminates it.
+Review the Summary page. Existing saves are backed up and SHA-256 verified before
+any game-file changes. Source saves are preserved. Conflicting files are not overwritten.
+
+The plugin waits for initialization and requires one exact stable ANSI path match.
+A full shorter-path rewrite cannot be atomic. SEH prevents ordinary access faults
+from escaping the worker, but cannot guarantee game integrity against concurrent writes.
+Do not install if you need an unconditional guarantee that a failed patch leaves no changes.
+
+Setup is unsigned. No certificate belonging to another publisher is used.
+The bundled Ultimate ASI Loader is distributed under its included MIT license.

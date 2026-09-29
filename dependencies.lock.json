@@ -1,0 +1,18 @@
+{
+  "ultimateAsiLoader": {
+    "version": "9.7.4",
+    "architecture": "x64",
+    "url": "https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases/download/v9.7.4/Ultimate-ASI-Loader-NoPDB_x64.zip",
+    "archiveSha256": "e5860e7d9a1805267535b65749575b5e406cc6ea3325c7392189c578815045d1",
+    "dllSha256": "031a3e5576d91dce1e438d36b9a3d462c7334ab4791990a8ff1e3ddc0e132daf",
+    "license": "MIT",
+    "licenseUrl": "https://raw.githubusercontent.com/ThirteenAG/Ultimate-ASI-Loader/v9.7.4/license"
+  },
+  "innoSetup": {
+    "version": "6.7.3",
+    "url": "https://github.com/jrsoftware/issrc/releases/download/is-6_7_3/innosetup-6.7.3.exe",
+    "sha256": "9c73c3bae7ed48d44112a0f48e66742c00090bdb5bef71d9d3c056c66e97b732",
+    "verifiedSigner": "Pyrsys B.V.",
+    "mode": "Build-time portable compiler only; not shipped to end users"
+  }
+}

@@ -1,41 +1,38 @@
-name: Build W3UnicodeSaveFix
-
+name: Build x64 experimental artifacts
 on:
+  push:
+    branches: [main]
+  pull_request:
   workflow_dispatch:
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
+permissions:
+  contents: read
 jobs:
   build:
-    runs-on: windows-latest
-
+    runs-on: windows-2022
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: pwsh
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install PS2EXE
-        shell: powershell
-        run: |
-          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-          Install-Module ps2exe -Scope CurrentUser -Force -AllowClobber
-
-      - name: Build EXE
-        shell: powershell
-        run: |
-          Invoke-ps2exe `
-            -InputFile .\build.ps1 `
-            -OutputFile .\W3UnicodeSaveFix.exe `
-            -NoConsole `
-            -Title "W3UnicodeSaveFix"
-
-      - name: Verify File Exists
-        shell: powershell
-        run: |
-          Get-ChildItem -Path .\W3UnicodeSaveFix.exe
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          name: W3UnicodeSaveFix
-          path: ${{ github.workspace }}/W3UnicodeSaveFix.exe
+          persist-credentials: false
+      - name: Resolve installed x64 toolchain
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+          $vs = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          $vc = Get-ChildItem (Join-Path $vs 'VC\Tools\MSVC') -Directory | Where-Object { Test-Path (Join-Path $_.FullName 'bin\Hostx64\x64\cl.exe') } | Sort-Object Name -Descending | Select-Object -First 1
+          $sdk = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\Include" -Directory | Where-Object { Test-Path (Join-Path $_.FullName 'um\Windows.h') } | Sort-Object Name -Descending | Select-Object -First 1
+          if (-not $vc -or -not $sdk) { throw 'MSVC/SDK not found' }
+          "W3_MSVC=$($vc.Name)" >> $env:GITHUB_ENV
+          "W3_SDK=$($sdk.Name)" >> $env:GITHUB_ENV
+      - name: Fetch verified dependencies, build and test
+        run: |
+          $deps = & .\tools\get-dependencies.ps1
+          .\build.ps1 -InnoCompiler $deps.InnoCompiler -LoaderDll $deps.LoaderDll -MsvcVersion $env:W3_MSVC -WindowsSdkVersion $env:W3_SDK
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: W3UnicodeSaveFix-x64-experimental
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14

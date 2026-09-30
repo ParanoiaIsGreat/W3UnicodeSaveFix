@@ -24,7 +24,7 @@ jobs:
         shell: powershell
         run: |
           Invoke-ps2exe `
-            -InputFile .\W3UnicodeSaveFix.ps1 `
+            -InputFile .\build.ps1 `
             -OutputFile .\W3UnicodeSaveFix.exe `
             -NoConsole `
             -Title "W3UnicodeSaveFix"
